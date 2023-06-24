@@ -2,6 +2,8 @@ package router
 
 import (
 	"gin_sample/handler"
+	"gin_sample/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,8 +15,11 @@ func SetupRouter() *gin.Engine {
 	// Ping test
 	r.GET("/ping", handler.Ping)
 
+	userService := service.NewUserService()
+	userHandler := handler.NewUserHandler(userService)
+
 	// Get user value
-	r.GET("/user/:name", handler.GetUser)
+	r.GET("/user/:name", userHandler.GetUser)
 
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:
@@ -37,7 +42,8 @@ func SetupRouter() *gin.Engine {
 	  	-H 'content-type: application/json' \
 	  	-d '{"value":"bar"}'
 	*/
-	authorized.POST("admin", handler.PostUser)
+	adminHandler := handler.NewAdminHandler(userService)
+	authorized.POST("admin", adminHandler.PostUser)
 
 	return r
 }

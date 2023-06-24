@@ -2,11 +2,22 @@ package handler
 
 import (
 	"gin_sample/service"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func PostUser(c *gin.Context) {
+func NewAdminHandler(service service.UserService) *AdminHandler {
+	return &AdminHandler{
+		service: service,
+	}
+}
+
+type AdminHandler struct {
+	service service.UserService
+}
+
+func (h AdminHandler) PostUser(c *gin.Context) {
 	user := c.MustGet(gin.AuthUserKey).(string)
 
 	// Parse JSON
@@ -15,7 +26,7 @@ func PostUser(c *gin.Context) {
 	}
 
 	if c.Bind(&json) == nil {
-		service.UpdateUser(user, json.Value)
+		h.service.UpdateUser(user, json.Value)
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	}
 }

@@ -1,8 +1,6 @@
 package main
 
-import (
-	"gin_sample/router"
-)
+import "gin_sample/router"
 
 func main() {
 	r := router.SetupRouter()
